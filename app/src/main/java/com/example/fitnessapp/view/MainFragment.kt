@@ -12,8 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.fitnessapp.MyApp
 import com.example.fitnessapp.databinding.FragmentMainBinding
-import com.example.fitnessapp.di.AppComponent
-import com.example.fitnessapp.model.LessonEntity
+import com.example.fitnessapp.model.Item
 import com.example.fitnessapp.viewmodel.LoadState
 import com.example.fitnessapp.viewmodel.MainFragmentViewModel
 import com.example.fitnessapp.viewmodel.TrainingInfoAdapter
@@ -23,8 +22,6 @@ import javax.inject.Inject
 class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
 
-
-    //private val viewModel: MainFragmentViewModel by viewModels()
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: MainFragmentViewModel by viewModels { viewModelFactory }
@@ -32,22 +29,20 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as MyApp).appComponent.inject(this)
-        if (savedInstanceState == null) {
-            viewModel.fetchTrainingInfo()
-        }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMainBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val trainingAdapter = TrainingInfoAdapter { viewModel.getTrainerById(it) }
+        val trainingAdapter = TrainingInfoAdapter()
         binding.trainingAdapter.adapter = trainingAdapter
 
         viewModel.trainingInfoLiveData.observe(viewLifecycleOwner) { loadState ->
@@ -55,7 +50,7 @@ class MainFragment : Fragment() {
                 is LoadState.Success<*> -> {
                     binding.progressBar.visibility = GONE
                     val trainingInfo = loadState.data
-                    trainingAdapter.setData(trainingInfo as List<LessonEntity>)
+                    trainingAdapter.setData(trainingInfo as List<Item>)
                 }
 
                 is LoadState.Error -> {
@@ -68,6 +63,5 @@ class MainFragment : Fragment() {
                 }
             }
         }
-     //   viewModel.fetchTrainingInfo()
     }
 }

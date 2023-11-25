@@ -16,7 +16,7 @@ class APIRepositoryImpl : Repository {
         .build()
     private val fitnessAPI = retrofit.create(TrainingInfoAPI::class.java)
 
-    override suspend fun fetchTrainingInfo(): LoadState {
+    override suspend fun getTrainingInfo(): LoadState {
         return try {
             val response = withContext(Dispatchers.IO) {
                 fitnessAPI.getTrainingInfo()

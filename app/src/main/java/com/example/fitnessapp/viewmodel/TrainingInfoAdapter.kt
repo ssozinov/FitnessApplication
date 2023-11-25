@@ -7,13 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fitnessapp.R
 import com.example.fitnessapp.databinding.ListItemBinding
 import com.example.fitnessapp.databinding.HeaderItemBinding
-import com.example.fitnessapp.model.LessonEntity
-import com.example.fitnessapp.model.ResultType
+import com.example.fitnessapp.model.HeaderItem
+import com.example.fitnessapp.model.Item
+import com.example.fitnessapp.model.LessonItem
+import java.lang.Exception
 
-class TrainingInfoAdapter(private val getTrainerById: (String) -> String?) :
+class TrainingInfoAdapter() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var trainingInfo: List<LessonEntity> = emptyList()
+    private var trainingInfo: List<Item> = emptyList()
 
     companion object {
         private const val VIEW_TYPE_TRAINING = 1
@@ -39,9 +41,12 @@ class TrainingInfoAdapter(private val getTrainerById: (String) -> String?) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (trainingInfo[position].type) {
-            ResultType.IsTraining -> VIEW_TYPE_TRAINING
-            ResultType.IsHeader -> VIEW_TYPE_HEADER
+        return when (trainingInfo[position]) {
+            is LessonItem -> VIEW_TYPE_TRAINING
+            is HeaderItem -> VIEW_TYPE_HEADER
+            else -> {
+                throw Exception("Unknown Type")
+            }
         }
     }
 
@@ -50,31 +55,41 @@ class TrainingInfoAdapter(private val getTrainerById: (String) -> String?) :
 
         when (holder) {
             is TrainingViewHolder -> {
-                val binding = holder.binding
-                binding.startTime.text = item.lesson?.startTime ?: ""
-                binding.lastTime.text = item.lesson?.endTime ?: ""
-                binding.trening.text = item.lesson?.name ?: ""
-                binding.hall.text = item.lesson?.place ?: ""
-                binding.color.setBackgroundColor(Color.parseColor(item.lesson?.color ?: "#FFFFFF"))
-                item.lesson?.coachId?.let {
-                    if (it == "") {
-                        binding.profile.setBackgroundResource(R.drawable.ic_people)
-                    } else {
-                        binding.profile.setBackgroundResource(R.drawable.ic_person)
+                if (item is LessonItem) {
+                    val binding = holder.binding
+                    binding.startTime.text = item.lesson.startTime ?: ""
+                    binding.lastTime.text = item.lesson.endTime ?: ""
+                    binding.trening.text = item.lesson.name ?: ""
+                    binding.hall.text = item.lesson.place ?: ""
+                    binding.color.setBackgroundColor(
+                        Color.parseColor(
+                            item.lesson.color ?: "#FFFFFF"
+                        )
+                    )
+                    item.lesson.coachId?.let {
+                        if (it == "") {
+                            binding.profile.setBackgroundResource(R.drawable.ic_people)
+                            binding.name.text = "Групповое занятие"
+                        } else {
+                            binding.profile.setBackgroundResource(R.drawable.ic_person)
+                            binding.name.text = item.lesson.lastName
+                        }
+
                     }
-                    binding.name.text = getTrainerById(it)
                 }
             }
 
             is HeaderViewHolder -> {
-                holder.binding.date.text = item.header
+                if (item is HeaderItem) {
+                    holder.binding.date.text = item.header
+                }
             }
         }
     }
 
     override fun getItemCount() = trainingInfo.size
 
-    fun setData(data: List<LessonEntity>) {
+    fun setData(data: List<Item>) {
         trainingInfo = data
         notifyDataSetChanged()
     }

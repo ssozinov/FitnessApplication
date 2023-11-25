@@ -1,12 +1,6 @@
 package com.example.fitnessapp.model
 
-data class LessonEntity(
-    val type: ResultType,
-    val lesson: LessonDTO?,
-    val header: String?
-)
+interface Item
+data class LessonItem(val lesson: LessonDTO) : Item
 
-enum class ResultType {
-    IsTraining,
-    IsHeader
-}
+data class HeaderItem(val header: String) : Item

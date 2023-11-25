@@ -3,8 +3,6 @@ package com.example.fitnessapp.model
 
 import android.icu.text.SimpleDateFormat
 import com.google.gson.annotations.SerializedName
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -22,19 +20,19 @@ data class TrainingInfoDTO(
 
 
 data class TrainerDTO(
-    val description: String?=null,
+    val description: String? = null,
     @SerializedName("full_name")
-    val fullName: String?=null,
+    val fullName: String? = null,
     @SerializedName("id")
-    val id: String?=null,
-    val imageUrl: String?=null,
-    val imageUrlMedium: String?=null,
-    val imageUrlSmall: String?=null,
+    val id: String? = null,
+    val imageUrl: String? = null,
+    val imageUrlMedium: String? = null,
+    val imageUrlSmall: String? = null,
     @SerializedName("last_name")
-    val lastName: String?=null,
+    val lastName: String? = null,
     @SerializedName("name")
-    val name: String?=null,
-    val position: String?=null
+    val name: String? = null,
+    val position: String? = null
 )
 
 data class TabDTO(
@@ -76,10 +74,11 @@ data class LessonDTO(
     @SerializedName("startTime")
     val startTime: String?,
     val tab: String?,
-    val tabId: Int?
-){
+    val tabId: Int?,
+    val lastName:String?
+) {
     val formatedDate: Date
-       get() = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date)
+        get() = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(date)
 
     val dateForPrint: String
         get() = SimpleDateFormat("EEEE, dd MMMM ", Locale("ru")).format(formatedDate)
